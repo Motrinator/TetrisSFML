@@ -1,30 +1,23 @@
-﻿using SFML.Graphics;
+﻿using System;
 using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 
 namespace TetrisSFML.Tetris
 {
     internal class TetrisViewModel : IDisposable
     {
         private readonly TetrisView _view;
-        private readonly TetrisController _tetrisController;
+        private TetrisController _tetrisController;
 
         public TetrisViewModel()
         {
             _view = new TetrisView();
-            _tetrisController = new TetrisController(
-                new Grid((x, y) => { }, (x, y) => { }, (x) => { }, () => { })
-            );
+            _tetrisController = InitTetrisController();
         }
 
         public void Run()
         {
-            _view.RenderWindow.KeyReleased += KeyEventHandler;
+            _view.RenderWindow.KeyReleased += KeyReleasedEventHandler;
+            _view.RenderWindow.KeyPressed += KeyPressedEventHandler;
             _tetrisController.Start();
 
             while (_view.RenderWindow.IsOpen)
@@ -34,7 +27,7 @@ namespace TetrisSFML.Tetris
             }
         }
 
-        private void KeyEventHandler(object? sender, KeyEventArgs keyEventArgs)
+        private void KeyReleasedEventHandler(object? sender, KeyEventArgs keyEventArgs)
         {
             switch (keyEventArgs.Code)
             {
@@ -54,7 +47,29 @@ namespace TetrisSFML.Tetris
                 case Keyboard.Key.D:
                     _tetrisController.Move(Shift.Right);
                     break;
+                case Keyboard.Key.R:
+                    _tetrisController.Dispose();
+                    _tetrisController = InitTetrisController();
+                    break;
             }
+        }
+
+        private void KeyPressedEventHandler(object? sender, KeyEventArgs keyEventArgs)
+        {
+            switch (keyEventArgs.Code)
+            {
+                case Keyboard.Key.Down:
+                case Keyboard.Key.S:
+                    _tetrisController.Down();
+                    break;
+            }
+        }
+
+        private static TetrisController InitTetrisController()
+        {
+            return new TetrisController(
+                            new Grid((x, y) => { }, (x, y) => { }, (x) => { }, () => { })
+                        );
         }
 
         public void Dispose()

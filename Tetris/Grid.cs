@@ -57,23 +57,34 @@ namespace TetrisSFML.Tetris
 
                 if (offsetPoint.Y < 0)
                 {
-                    newPoint = new Point(point.X, 0);
+                    if (offsetPoint.Y + points[i].Y < 0)
+                    {
+                        newPoint = new Point(newPoint.X, 0);
+                    }
+                    else
+                    {
+                        newPoint = new Point(newPoint.X, newPoint.Y + points[i].Y);
+                    }
                 }
                 else if (offsetPoint.Y >= Columns)
                 {
-                    newPoint = new Point(point.X, Columns - points[i].Y - 1);
+                    newPoint = new Point(newPoint.X, Columns - points[i].Y - 1);
                 }
 
-                if (offsetPoint.X < 0)
-                {
-                    continue;
-                }
-                else if (offsetPoint.X >= Rows)
+                if (offsetPoint.X >= Rows)
                 {
                     newPoint = new Point(Rows - points[i].X - 1, newPoint.Y);
                 }
+            }
 
-                offsetPoint = newPoint + points[i];
+            for (int i = 0; i < points.Length; i++)
+            {
+                Point offsetPoint = newPoint + points[i];
+
+                if (newPoint.X < 0)
+                {
+                    continue;
+                }
 
                 while (_area[offsetPoint.X][offsetPoint.Y] > 0)
                 {
@@ -92,12 +103,12 @@ namespace TetrisSFML.Tetris
                 throw new IndexOutOfRangeException(nameof(tetraminoType));
             }
 
-            var destructedRows = new HashSet<int>();
+            var destructedRows = new List<int>(4);
             bool gameOver = false;
 
             for (int i = 0; i < points.Length; i++)
             {
-                if (points[i].Y < 0 && !gameOver)
+                if (points[i].X < 0 && !gameOver)
                 {
                     gameOver = true;
 
@@ -126,11 +137,12 @@ namespace TetrisSFML.Tetris
                 OnRemoveRows(_area, destructedRows);
             }
 
-            foreach (int distructedRow in destructedRows)
+            foreach (int distructedRow in destructedRows.OrderByDescending(x => x))
             {
                 _area.RemoveAt(distructedRow);
-                _area.Insert(0, new byte[Columns]);
             }
+
+            _area.InsertRange(0, Enumerable.Range(0, destructedRows.Count).Select(_ => new byte[Columns]));
 
             OnRemovedRows(_area, destructedRows);
         }

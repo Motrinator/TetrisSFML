@@ -75,7 +75,7 @@ namespace TetrisSFML.Tetris
 
             foreach (Point point in points)
             {
-                _cellTemplate.Position = new Vector2f((_cellSise * point.Y), _cellSise * point.X + 1);
+                _cellTemplate.Position = new Vector2f(_cellSise * point.Y, (_cellSise * point.X) + 1);
 
                 RenderWindow.Draw(_cellTemplate);
             }

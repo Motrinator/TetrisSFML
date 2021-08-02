@@ -4,7 +4,7 @@ namespace TetrisSFML.Tetris.Tetraminos
 {
     public class LineTetramino : Tetramino
     {
-        private const byte _rotatePositionCount = 3;
+        private const byte _rotatePositionCount = 4;
 
         private int _rotation;
 
@@ -15,34 +15,15 @@ namespace TetrisSFML.Tetris.Tetraminos
 
         public override void Rotate()
         {
-            float centerX = (0.5f * _points[1].X) - _points[2].X;
-            float centerY = (0.5f * _points[1].Y) - _points[2].Y;
-
             _rotation = (_rotation + 1) % _rotatePositionCount;
-
-            switch (++_rotation)
+            var centerPoint = _rotation switch
             {
-                case 0:
-                    centerY += 0.5f;
-                    break;
-                case 1:
-                    centerX -= 0.5f;
-                    break;
-                case 2:
-                    centerY -= 0.5f;
-                    break;
-                case 3:
-                    centerX += 0.5f;
-                    break;
-            }
+                0 or 2 => _points[2],
+                1 or 3 => _points[1],
+                _ => throw new IndexOutOfRangeException(),
+            };
 
-            for (int i = 0; i < _points.Length; i++)
-            {
-                float x = _points[i].X - centerX;
-                float y = _points[i].Y - centerY;
-
-                _points[i] = new Point(Convert.ToInt32(centerX + y), Convert.ToInt32(centerY + x));
-            }
+            Rotate(centerPoint, -1);
         }
     }
 }

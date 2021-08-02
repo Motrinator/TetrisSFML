@@ -16,7 +16,7 @@ namespace TetrisSFML.Tetris
         {
             _getTetraminoFuncs = new Func<Grid, Tetramino>[]
             {
-                (x) => new Tetramino(
+                (x) => new LineTetramino(
                     typeId: 1,
                     rotation: (byte)_random.Next(0, 4),
                     points: new Point[]
@@ -52,9 +52,8 @@ namespace TetrisSFML.Tetris
                     },
                     grid: x
                 ),
-                (x) => new Tetramino(
+                (x) => new SquareTetramino(
                     typeId: 4,
-                    rotation: null,
                     points: new Point[]
                     {
                         new Point(0, 0),
@@ -69,10 +68,10 @@ namespace TetrisSFML.Tetris
                     rotation: (byte)_random.Next(0, 4),
                     points: new Point[]
                     {
-                        new Point(2, 0),
                         new Point(2, 1),
-                        new Point(1, 1),
-                        new Point(1, 2)
+                        new Point(2, 2),
+                        new Point(1, 2),
+                        new Point(1, 3)
                     },
                     grid: x
                 ),
@@ -93,10 +92,10 @@ namespace TetrisSFML.Tetris
                     rotation: (byte)_random.Next(0, 4),
                     points: new Point[]
                     {
-                        new Point(1, 0),
                         new Point(1, 1),
-                        new Point(2, 1),
-                        new Point(2, 2)
+                        new Point(1, 2),
+                        new Point(2, 2),
+                        new Point(2, 3)
                     },
                     grid: x
                 ),
@@ -110,7 +109,6 @@ namespace TetrisSFML.Tetris
                 throw new ArgumentNullException(nameof(grid));
             }
 
-            //return _getTetraminoFuncs[0](grid);
             return _getTetraminoFuncs[_random.Next(0, _getTetraminoFuncs.Count)](grid);
         }
     }

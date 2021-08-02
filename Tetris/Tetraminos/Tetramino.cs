@@ -23,7 +23,7 @@ namespace TetrisSFML.Tetris.Tetraminos
 
         public Tetramino(byte typeId, byte? rotation, Point[] points, Grid grid)
         {
-            Console.WriteLine("Created tetromino {0}, rotation {1}", typeId, rotation);
+            Console.WriteLine("typeid {0}, rotation {1}", typeId, rotation);
             _points = points ?? throw new ArgumentNullException(nameof(points));
             _grid = grid ?? throw new ArgumentNullException(nameof(grid));
             TypeId = typeId;
@@ -85,21 +85,23 @@ namespace TetrisSFML.Tetris.Tetraminos
             {
                 Position += shiftPoint;
             }
+
+            Console.WriteLine("Position: X = {0}, Y = {1}", Position.X, Position.Y);
         }
 
         private void Rotate(int rotateCount)
         {
-            if (rotateCount < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(rotateCount));
-            }
+            Point centerPoint = _points.Aggregate((x, y) => x + y) / _points.Length;
 
+            Rotate(centerPoint, rotateCount);
+        }
+
+        protected void Rotate(in Point centerPoint, int rotateCount)
+        {
             if (rotateCount == 0)
             {
                 return;
             }
-
-            Point centerPoint = _points.Aggregate((x, y) => x + y) / _points.Length;
 
             for (int i = 0; i < _points.Length; i++)
             {
@@ -114,6 +116,14 @@ namespace TetrisSFML.Tetris.Tetraminos
             }
 
             Position = _grid.CheckAndFixPoints(Position, _points);
+
+            foreach (var point1 in _points)
+            {
+                Console.WriteLine("X: {0}; Y: {1}", point1.X, point1.Y);
+                Console.WriteLine();
+            }
+
+            Console.WriteLine();
         }
     }
 }
